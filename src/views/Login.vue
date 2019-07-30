@@ -85,15 +85,6 @@
                           this.$router.push({ path: '/echarts' });
                       }
                   })
-
-
-
-
-
-
-
-
-
           } else {
             console.log('error submit!!');
             return false;
