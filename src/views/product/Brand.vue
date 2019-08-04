@@ -94,7 +94,11 @@
 					<el-input v-model="addForm.englishName" auto-complete="off"></el-input>
 				</el-form-item>
 				<el-form-item label="类型" prop="productTypeId">
-					<el-input v-model="addForm.productTypeId" auto-complete="off"></el-input>
+					<el-cascader
+						:options="productTypes"
+						:props="props"
+						v-model="addForm.productTypeId">
+					</el-cascader>
 				</el-form-item>
 				<el-form-item label="描述">
 					<el-input type="textarea" v-model="addForm.description"></el-input>
@@ -116,6 +120,11 @@
 	export default {
 		data() {
 			return {
+                productTypes:[],
+                props:{
+                    label:"name",
+                    value:"id"
+                },
 				filters: {
 					keyword: ''
 				},
@@ -161,6 +170,13 @@
 			}
 		},
 		methods: {
+            //加载类型数据
+            loadProductTypes(){
+                this.$http.get("/product/productType/list")
+                    .then(res=>{
+                        this.productTypes = res.data;
+                    })
+            },
 			//性别显示转换
 			formatSex: function (row, column) {
 				return row.sex == 1 ? '男' : row.sex == 0 ? '女' : '未知';
@@ -271,6 +287,11 @@
 							//NProgress.start();
 							let para = Object.assign({}, this.addForm);//对象的复制
 
+                            //级联选择器的结果是一个数组
+                            para.productTypeId = para.productTypeId[para.productTypeId.length-1];
+
+
+
 							this.$http.post("/product/brand/add",para)
 								.then(res=>{
                                     this.addLoading = false;
@@ -335,6 +356,7 @@
 		//相当于jquery的$(function(){})
 		mounted() {
 			this.getBrands();
+			this.loadProductTypes();
 		}
 	}
 
